@@ -3,6 +3,7 @@ package com.example.sojunrecycleredview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
@@ -19,8 +20,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class fragment_list extends Fragment {
     Button add_button;
@@ -51,6 +58,7 @@ public class fragment_list extends Fragment {
             @Override
             public void onClick(View v) {
                 data.add(addItem(camera_button.getDrawable(),editText_howmuch.getText().toString(),editText_what.getText().toString()));
+                onSaveData(v);
                 simpleTextAdapter.notifyDataSetChanged();
             }
         });
@@ -62,6 +70,40 @@ public class fragment_list extends Fragment {
         item.setDecStr(desc);
         item.setTitleStr(title);
         return item;
+    }
+    protected void onSaveData(View v){
+        ImageButton cameradrawble=v.findViewById(R.id.fragment_list_camerabutton);
+        EditText edithowmuch = (EditText)v.findViewById(R.id.fragment_list_howmuch);
+        EditText editwhat = (EditText)v.findViewById(R.id.fragment_list_what);
+
+        Item item1=new Item();
+       item1.setIconDrawble(cameradrawble.getDrawable());
+       item1.setTitleStr(edithowmuch.getText().toString());
+       item1.setDecStr(editwhat.getText().toString());
+        // Gson 인스턴스 생성
+        Gson gson = new GsonBuilder().create();
+        // JSON 으로 변환
+        String strContact = gson.toJson(item1, Item.class);
+
+        SharedPreferences sp = getActivity().getSharedPreferences("shared", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("contact", strContact); // JSON으로 변환한 객체를 저장한다.
+        editor.commit(); //완료한다.
+    }
+    protected void onSearchData(View v){
+        SharedPreferences sp = getActivity().getSharedPreferences("shared", MODE_PRIVATE);
+        String strContact = sp.getString("contact", "");
+
+        Gson gson = new GsonBuilder().create();
+        // 변환
+        Item item = gson.fromJson(strContact, Item.class);
+
+        ImageButton imageButton=v.findViewById(R.id.fragment_list_camerabutton);
+        TextView tvId = (TextView)v.findViewById(R.id.fragment_list_howmuch);
+        TextView tvName = (TextView)v.findViewById(R.id.fragment_list_what);
+        imageButton.setImageDrawable(item.getIconDrawble());
+        tvId.setText(item.getTitleStr());
+        tvName.setText(item.getDecStr());
     }
 }
 
