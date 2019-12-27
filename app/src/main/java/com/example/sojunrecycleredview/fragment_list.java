@@ -4,6 +4,7 @@ package com.example.sojunrecycleredview;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,8 @@ public class fragment_list extends Fragment {
     Button add_button;
     EditText editText_howmuch,editText_what;
     ImageButton camera_button;
-    ArrayList<Item> data=new ArrayList<>();
+    ArrayList<Item> data=new ArrayList<Item>();
+    int item_position=0;
     @Override
     public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
@@ -41,28 +44,32 @@ public class fragment_list extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Context context=getContext();
-        View v= inflater.inflate(R.layout.activity_fragment_list, container, false);
+        final View view= inflater.inflate(R.layout.activity_fragment_list, container, false);
 
 //        data.add(addItem(getResources().getDrawable(R.drawable.gomtang),"gimoring1","fuckyou"));
 //        data.add(addItem(getResources().getDrawable(R.drawable.honor_3level),"gimoring2","fuckyou"));
 //        data.add(addItem(getResources().getDrawable(R.drawable.kimminjun),"gimoring3","fuckyou"));
-        RecyclerView recyclerView=v.findViewById(R.id.recyclerview);
+        RecyclerView recyclerView=view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         final SimpleTextAdapter simpleTextAdapter=new SimpleTextAdapter(data);
         recyclerView.setAdapter(simpleTextAdapter);
-        add_button=v.findViewById(R.id.fragment_list_addbutton);
-        editText_howmuch=v.findViewById(R.id.fragment_list_howmuch);
-        editText_what=v.findViewById(R.id.fragment_list_what);
-        camera_button=v.findViewById(R.id.fragment_list_camerabutton);
+
+        data=onSearchData();
+
+        simpleTextAdapter.notifyDataSetChanged();
+        add_button=view.findViewById(R.id.fragment_list_addbutton);
+        editText_howmuch=view.findViewById(R.id.fragment_list_howmuch);
+        editText_what=view.findViewById(R.id.fragment_list_what);
+        camera_button=view.findViewById(R.id.fragment_list_camerabutton);
         add_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 data.add(addItem(camera_button.getDrawable(),editText_howmuch.getText().toString(),editText_what.getText().toString()));
-                onSaveData(v);
+                onSaveData(data);
                 simpleTextAdapter.notifyDataSetChanged();
             }
         });
-        return  v;
+        return  view;
     }
     public Item addItem(Drawable icon, String title, String desc){
         Item item= new Item();
@@ -71,39 +78,38 @@ public class fragment_list extends Fragment {
         item.setTitleStr(title);
         return item;
     }
-    protected void onSaveData(View v){
-        ImageButton cameradrawble=v.findViewById(R.id.fragment_list_camerabutton);
-        EditText edithowmuch = (EditText)v.findViewById(R.id.fragment_list_howmuch);
-        EditText editwhat = (EditText)v.findViewById(R.id.fragment_list_what);
+    protected void onSaveData(ArrayList<Item> items){
+//        ImageButton cameradrawble=v.findViewById(R.id.fragment_list_camerabutton);
+//        EditText edithowmuch = (EditText)v.findViewById(R.id.fragment_list_howmuch);
+//        EditText editwhat = (EditText)v.findViewById(R.id.fragment_list_what);
 
-        Item item1=new Item();
-       item1.setIconDrawble(cameradrawble.getDrawable());
-       item1.setTitleStr(edithowmuch.getText().toString());
-       item1.setDecStr(editwhat.getText().toString());
+//        Item item1=new Item();
+//        if(cameradrawble.getDrawable() == null)
+//            item1.setIconDrawble(new ColorDrawable());
+//       item1.setIconDrawble(cameradrawble.getDrawable());
+//       item1.setTitleStr(edithowmuch.getText().toString());
+//       item1.setDecStr(editwhat.getText().toString());
         // Gson 인스턴스 생성
         Gson gson = new GsonBuilder().create();
         // JSON 으로 변환
-        String strContact = gson.toJson(item1, Item.class);
+        String strContact = gson.toJson(items, ArrayList.class);
+
+        item_position+=1;
 
         SharedPreferences sp = getActivity().getSharedPreferences("shared", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("contact", strContact); // JSON으로 변환한 객체를 저장한다.
         editor.commit(); //완료한다.
+        Log.e("fragment_list","saved in sharedpreference");
     }
-    protected void onSearchData(View v){
+    protected ArrayList<Item> onSearchData(){
         SharedPreferences sp = getActivity().getSharedPreferences("shared", MODE_PRIVATE);
         String strContact = sp.getString("contact", "");
 
         Gson gson = new GsonBuilder().create();
         // 변환
-        Item item = gson.fromJson(strContact, Item.class);
-
-        ImageButton imageButton=v.findViewById(R.id.fragment_list_camerabutton);
-        TextView tvId = (TextView)v.findViewById(R.id.fragment_list_howmuch);
-        TextView tvName = (TextView)v.findViewById(R.id.fragment_list_what);
-        imageButton.setImageDrawable(item.getIconDrawble());
-        tvId.setText(item.getTitleStr());
-        tvName.setText(item.getDecStr());
+        ArrayList<Item> items = gson.fromJson(strContact, ArrayList.class);
+        return items;
     }
 }
 
