@@ -2,15 +2,11 @@ package com.example.sojunrecycleredview;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,12 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -35,8 +27,7 @@ public class fragment_list extends Fragment {
     Button add_button;
     EditText editText_howmuch,editText_what;
     ImageButton camera_button;
-    ArrayList<Item> data=new ArrayList<Item>();
-    int item_position=0;
+    ArrayList<Item> data=new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
@@ -50,7 +41,7 @@ public class fragment_list extends Fragment {
 //        data.add(addItem(getResources().getDrawable(R.drawable.honor_3level),"gimoring2","fuckyou"));
 //        data.add(addItem(getResources().getDrawable(R.drawable.kimminjun),"gimoring3","fuckyou"));
         RecyclerView recyclerView=view.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
         final SimpleTextAdapter simpleTextAdapter=new SimpleTextAdapter(data);
         recyclerView.setAdapter(simpleTextAdapter);
 
@@ -93,8 +84,6 @@ public class fragment_list extends Fragment {
         Gson gson = new GsonBuilder().create();
         // JSON 으로 변환
         String strContact = gson.toJson(items, ArrayList.class);
-
-        item_position+=1;
 
         SharedPreferences sp = getActivity().getSharedPreferences("shared", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

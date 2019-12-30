@@ -3,7 +3,6 @@ package com.example.sojunrecycleredview;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +24,11 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
         }
     }
     private ArrayList<Item> mData=null;
+    private ArrayList<regular_item> rData=null;
     SimpleTextAdapter(ArrayList<Item> list){
         mData=list;
     }
+
 
     @Override
     public SimpleTextAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
