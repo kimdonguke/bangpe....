@@ -63,10 +63,7 @@ public class fragment_list extends Fragment {
         return  view;
     }
     public Item addItem(Drawable icon, String title, String desc){
-        Item item= new Item();
-        item.setIconDrawble(icon);
-        item.setDecStr(desc);
-        item.setTitleStr(title);
+        Item item= new Item(int);
         return item;
     }
     protected void onSaveData(ArrayList<Item> items){

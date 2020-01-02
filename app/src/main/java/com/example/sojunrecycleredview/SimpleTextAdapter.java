@@ -55,4 +55,7 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     }
 }
 
+/*
+
+ */
 
