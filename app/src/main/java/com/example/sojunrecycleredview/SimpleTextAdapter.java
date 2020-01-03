@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.ViewHolder> {
 
+
+    private ArrayList<Item> mData=null;
     public  class ViewHolder extends RecyclerView.ViewHolder{
         TextView textView,decsText;
         ImageView imageView;
@@ -23,26 +25,44 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
             imageView=itemView.findViewById(R.id.item_imageview);
         }
     }
-    private ArrayList<Item> mData=null;
-    private ArrayList<regular_item> rData=null;
+
     SimpleTextAdapter(ArrayList<Item> list){
         mData=list;
     }
 
 
     @Override
-    public SimpleTextAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public SimpleTextAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
         Context context = parent.getContext() ;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
-        View view = inflater.inflate(R.layout.recycleritem, parent, false) ;
-        SimpleTextAdapter.ViewHolder vh = new SimpleTextAdapter.ViewHolder(view) ;
-
-        return vh;
+        if(viewType== Code.ViewType.History){
+            view = inflater.inflate(R.layout.regular_item, parent, false);
+            return new Cente(view);
+        }
+        else if(viewType==Code.ViewType.Regular){
+            return new
+        }
     }
+    @Override
+    public int getItemViewType(int position) {
+        return mData.get(position).getViewType();
+    }
+
 
     @Override
     public void onBindViewHolder(@NonNull SimpleTextAdapter.ViewHolder viewHolder, int i) {
+        if(viewHolder instanceof RegularViewHolder)
+        {
+            ((RegularViewHolder) viewHolder).content.setText(mData.get(position).getContent());
+        }
+        else if(viewHolder instanceof HistoryViewHolder)
+        {
+            ((HistoryViewHolder) viewHolder).name.setText(mData.get(position).getName());
+            ((HistoryViewHolder) viewHolder).content.setText(mData.get(position).getContent());
+        }
+
         Item item =mData.get(i);
         viewHolder.textView.setText(item.getTitleStr());
         viewHolder.imageView.setImageDrawable(item.getIconDrawble());
@@ -53,6 +73,35 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     public int getItemCount() {
         return mData.size();
     }
+
+
+    public class RegularViewHolder extends RecyclerView.ViewHolder{
+        TextView content;
+
+        RegularViewHolder(View itemView)
+        {
+            super(itemView);
+
+            content = itemView.findViewById(R.id.content);
+        }
+    }
+
+    public class HistoryViewHolder extends RecyclerView.ViewHolder{
+        TextView content;
+        TextView name;
+        ImageView image;
+
+        HistoryViewHolder(View itemView)
+        {
+            super(itemView);
+
+            content = itemView.findViewById(R.id.content);
+            name = itemView.findViewById(R.id.name);
+            image = itemView.findViewById(R.id.imageView);
+        }
+    }
+
+
 }
 
 /*

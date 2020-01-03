@@ -33,17 +33,9 @@ public class Item {
         }
 
 
-        public int getViewtype() {
-        return viewtype;
-    }
-
-        public class Code {
-            public class ViewType{
-                public static final int Regular = 0;
-                public static final int RIGHT_CONTENT = 1;
-                public static final int CENTER_CONTENT = 2;
-            }
-      }
+        public int getViewType() {
+           return viewtype;
+       }
 }
 
 
